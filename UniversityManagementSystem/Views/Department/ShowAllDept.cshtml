@@ -1,0 +1,53 @@
+﻿@model IEnumerable<UniversityManagementSystem.Models.Department>
+
+@{
+    ViewBag.Title = "Department List";
+}
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h3>View All Departments</h3>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="table-responsive">
+                    <table class="table table-striped jambo_table bulk_action">
+                        <thead>
+                            <tr class="headings">
+                                <th class="column-title" style="display: table-cell;">Code </th>
+                                <th class="column-title" style="display: table-cell;">Name </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int i = 0;
+                                foreach (var item in Model)
+                                {
+                                    i++;
+                                    if (i % 2 != 0)
+                                    {
+                                        <tr class="odd pointer">
+                                            <td>@item.Code</td>
+                                            <td>@item.Name</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr class="">
+                                            <td>@item.Code</td>
+                                            <td>@item.Name</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

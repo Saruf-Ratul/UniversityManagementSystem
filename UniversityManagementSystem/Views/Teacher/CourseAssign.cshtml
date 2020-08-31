@@ -1,0 +1,243 @@
+﻿@model UniversityManagementSystem.Models.ViewModel.AssignCourseViewModel
+@{
+    ViewBag.Title = "Course Assign";
+}
+
+
+<style>
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .btn {
+        margin-top: 0px;
+    }
+</style>
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h3>Course Assign to Teacher</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br>
+                    <form id="FormData" class="form">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DepartmentId, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.DropDownListFor(model => model.DepartmentId, new SelectList(ViewBag.getAllDepartments, "Id", "Name"), "--Select Department--", new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.DepartmentId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.TeacherId, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.DropDownListFor(model => model.TeacherId, new SelectList(" "), "--Select Teacher--", new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.TeacherId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.TakenCredit, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.TakenCredit, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.TakenCredit)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RemainingCredit, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.RemainingCredit, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.RemainingCredit)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CourseId, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12 remoteValidation">
+                                @Html.DropDownListFor(model => model.CourseId, new SelectList(" "), "--Select Course Code--", new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.CourseId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Name)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Credit, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Credit, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Credit)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-4 col-sm-4 col-xs-12 col-md-offset-8">
+                                <a href="#" class="btn btn-success" onclick="SaveForm()">Assign</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#RemainingCredit").attr("readonly", "readonly");
+            $("#TakenCredit").attr("readonly", "readonly");
+            $("#Name").attr("readonly", "readonly");
+            $("#Credit").attr("readonly", "readonly");
+
+            $("#DepartmentId").change(function () {
+                var deptId = $("#DepartmentId").val();
+                $("#TakenCredit").val("");
+                $("#RemainingCredit").val("");
+                $("#Name").val("");
+                $("#Credit").val("");
+                //Load Teacher
+                var json = { Id: deptId };
+                $.ajax({
+                    type: "POST",
+                    url: '/Teacher/GetTeacherByDepartmentId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (teachers) {
+                        $("#TeacherId").empty();
+                        $("#TeacherId").append('<option value=' + "" + '>' + "--Select Teacher--" + '</option>');
+                        $.each(teachers, function (key, value) {
+                            $("#TeacherId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+                        });
+                    }
+                });
+                //Load Course Code
+                $.ajax({
+                    type: "POST",
+                    url: '/Course/GetCourseByDepartmentId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (course) {
+                        $("#CourseId").empty();
+                        $("#CourseId").append('<option value=' + " " + '>' + "--Select Course Code--" + '</option>');
+                        $.each(course, function (key, value) {
+                            $("#CourseId").append('<option value=' + value.Id + '>' + value.Code + '</option>');
+                        });
+                    }
+                });
+            });
+
+            $("#TeacherId").change(function () {
+                var teacherId = $("#TeacherId").val();
+                var json = { Id: teacherId };
+                $.ajax({
+                    type: "POST",
+                    url: '/Teacher/GetTeacherDetailByTeacherId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (teachers) {
+                        $("#TakenCredit").val("");
+                        $("#RemainingCredit").val("");
+                        var obj = JSON.parse(teachers);
+                        $("#TakenCredit").val(obj.TakenCredit);
+                        $("#RemainingCredit").val(obj.RemainingCredit);
+                        $("input").addClass("valid");
+                    }
+                });
+            });
+
+            $("#CourseId").change(function () {
+                var courseId = $("#CourseId").val();
+                var json = { Id: courseId };
+                $.ajax({
+                    type: "POST",
+                    url: '/Course/GetCourseDetailByCourseId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (course) {
+                        $("#Name").val("");
+                        $("#Credit").val("");
+                        $(".remoteValidation span").remove();
+                        if (!course.IsAssignCourse.Data) {
+                            var invalid = '<span class="field-validation-error" data-valmsg-for="CourseId" data-valmsg-replace="true"><span for="CourseId" class="">This Course Already Assign! Try Another.</span></span>';
+                            $(".remoteValidation").append(invalid);
+                        } else {
+                            var valid = '<span class="field-validation-valid" data-valmsg-for="CourseId" data-valmsg-replace="true"></span>';
+                            $(".remoteValidation").append(valid);    
+                            $("input").addClass("valid");
+                        }
+                        $("#Name").val(course.Name);
+                        $("#Credit").val(course.Credit);
+                        //var obj = JSON.parse(course);
+                    }
+                });
+            });
+        });
+
+        var SaveForm = function () {
+            var data = $("#FormData").serialize();
+            if (!$("#FormData").valid()) {
+                return false;
+            }
+            var remainingCredit = Number($("#RemainingCredit").val());
+            var courseCredit = Number($("#Credit").val());
+            if (remainingCredit < courseCredit) {
+                swal({
+                    title: 'Are you sure?',
+                    text: "This Course Credit Is More Than Your Remaining Credit!,Do You want to take this extra credit?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: "No"
+                }).then(function (isConfirm) {
+                    if (isConfirm.value) {
+                        $.ajax({
+                            type: "Post",
+                            url: "/Teacher/CourseAssign",
+                            data: data,
+                            success: function (result) {
+                                if (result) {
+                                    swal(
+                                        'Good job!',
+                                        'Successfully Course Assign To Teacher',
+                                        'success'
+                                    );
+                                    $("input").removeClass("valid");
+                                    $("select").removeClass("valid");
+                                    $("textarea").removeClass("valid");
+                                    $(".form")[0].reset();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: "Post",
+                    url: "/Teacher/CourseAssign",
+                    data: data,
+                    success: function (result) {
+                        if (result) {
+                            swal(
+                                'Good job!',
+                                'Successfully Course Assign To Teacher',
+                                'success'
+                            );
+                            $("input").removeClass("valid");
+                            $("select").removeClass("valid");
+                            $("textarea").removeClass("valid");
+                            $(".form")[0].reset();
+                        }
+                    }
+                });
+            }
+            return true;
+        }
+    </script>
+}

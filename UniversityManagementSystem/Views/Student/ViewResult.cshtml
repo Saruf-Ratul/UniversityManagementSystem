@@ -1,0 +1,190 @@
+﻿@model UniversityManagementSystem.Models.StudentResult
+@{
+    ViewBag.Title = "View Result";
+}
+
+<style>
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .btn {
+        margin-top: 0px;
+    }
+</style>
+
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h3>View Student Result</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br>
+                    <form id="FormData" class="form">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.StudentId, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.DropDownListFor(model => model.StudentId, new SelectList(ViewBag.getAllStudents, "Id", "RegNo"), "--Select Student Reg. No.--", new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.StudentId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Name)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Email)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Department, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Department, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Department)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-4 col-sm-4 col-xs-12 col-md-offset-8">
+                                <a href="#" class="btn btn-success" onclick="MakePdf()">Make PDF</a>
+                            </div>
+                        </div>
+                    </form><br/><br/><br/>
+                    <div class="table-responsive">
+                        <table class="table table-striped jambo_table bulk_action">
+                            <thead>
+                                <tr class="headings">
+                                    <th class="column-title" style="display: table-cell;">Course Code </th>
+                                    <th class="column-title" style="display: table-cell;">Name </th>
+                                    <th class="column-title" style="display: table-cell;">Grade </th>
+                                </tr>
+                            </thead>
+                            <tbody id="ViewResultByStudentId"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#Name").attr("readonly", "readonly");
+            $("#Email").attr("readonly", "readonly");
+            $("#Department").attr("readonly", "readonly");
+
+            $("#StudentId").change(function () {
+                var studentId = $("#StudentId").val();
+                $("#Name").val("");
+                $("#Email").val("");
+                $("#Department").val("");
+                $("#ViewResultByStudentId").empty();
+                var json = { Id: studentId };
+                $.ajax({
+                    type: "POST",
+                    url: '/Student/GetStudentInfoByStudentId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (student) {
+                        //var obj = JSON.parse(student);
+                        $("#Name").val(student.Name);
+                        $("#Email").val(student.Email);
+                        $("#Department").val(student.Department);
+                        $("input").addClass("valid");
+                    }
+                });
+                //Load Course
+
+                $.ajax({
+                    type: "POST",
+                    url: '/Student/GetResultByStudentId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (studentResult) {
+                        var i = 0;
+                        $.each(studentResult, function (key, value) {
+                            i++;
+                            if (i % 2 != 0) {
+                                var odd = '<tr class="odd pointer">' +
+                                    '<td>' + value.CourseCode + '</td>' +
+                                    '<td>' + value.Name + '</td>' +
+                                    '<td>' + value.Grade + '</td>' +
+                                    '</tr>';
+                                $("#ViewResultByStudentId").append(odd);
+                            }
+                            else {
+                                var even = '<tr class="">' +
+                                   '<td>' + value.CourseCode + '</td>' +
+                                   '<td>' + value.Name + '</td>' +
+                                   '<td>' + value.Grade + '</td>' +
+                                   '</tr>';
+                                $("#ViewResultByStudentId").append(even);
+                            }
+
+                        });
+
+                    }
+                });
+                //$.ajax({
+                //    type: "POST",
+                //    url: '/Student/GetStudentEnrollCourses',
+                //    contentType: "application/json; charset=utf-8",
+                //    data: JSON.stringify(json),
+                //    success: function (course) {
+                //        $("#CourseId").empty();
+                //        $("#CourseId").append('<option value=' + " " + '>' + "--Select Course --" + '</option>');
+                //        $.each(course, function (key, value) {
+                //            $("#CourseId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+                //        });
+                //    }
+                //});
+
+
+
+            });
+        });
+        //var SaveForm = function () {
+        //    var data = $("#FormData").serialize();
+        //    if (!$("#FormData").valid()) {
+        //        return false;
+        //    }
+        //    $.ajax({
+        //        type: "Post",
+        //        url: "/Student/SaveStudentResult",
+        //        data: data,
+        //        success: function (result) {
+        //            if (result == "") {
+        //                swal({
+        //                    type: 'error',
+        //                    title: 'Save Result Faield',
+        //                    text: 'Something went wrong! Please Try Agian'
+        //                });
+        //            } else {
+        //                swal(
+        //                'Good job!',
+        //                '' + result + '',
+        //                'success'
+        //            );
+        //                $("input").removeClass("valid");
+        //                $("select").removeClass("valid");
+        //                $("textarea").removeClass("valid");
+        //                $(".form")[0].reset();
+        //            }
+
+
+        //        }
+        //    });
+        //    return true;
+        //}
+    </script>
+}

@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title - University</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/custom.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet"/>
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+</head>
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="#" class="site_title"><i class="fa fa-paw"></i> <span>BITM</span></a>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <!-- menu profile quick info -->
+                    @*<div class="profile clearfix">
+                            <div class="profile_pic">
+                                 <img src="tofael.jpg" alt="..." class="img-circle profile_img">
+                            </div>
+                              <div class="profile_info">
+                               <span>Welcome,</span>
+                               <h2>Md, Tofael</h2>
+                             </div>
+                        </div>*@
+                    <!-- /menu profile quick info -->
+                    <br />
+
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        <div class="menu_section">
+                            <ul class="nav side-menu">
+                                <li><a href="@Url.Action("Index","Home")"><i class="fa fa-home"></i> Home </a> </li>
+                                <li>
+                                    <a><i class="fa fa-institution"></i> Department <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="@Url.Action("SaveNewDept","Department")">Add New Department</a></li>
+                                        <li><a href="@Url.Action("ShowAllDept","Department")">Department List</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a><i class="fa fa-clone"></i> Course <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="@Url.Action("Save","Course")">Add New Course</a></li>
+                                        <li><a href="@Url.Action("ViewCourseStatics","Course")">View Course Statics</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a><i class="fa fa-newspaper-o"></i> Teacher <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="@Url.Action("Save","Teacher")">Add New Teacher</a></li>
+                                        <li><a href="@Url.Action("CourseAssign","Teacher")">Course Assign</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a><i class="fa fa-group"></i> Student <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="@Url.Action("Save","Student")">Registration</a></li>
+                                        <li><a href="@Url.Action("EnrollInACourse","Student")">Enroll Course</a></li>
+                                        <li><a href="@Url.Action("SaveResult","Student")">Save Result</a></li>
+                                        <li><a href="@Url.Action("ViewResult","Student")">View Result</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a><i class="fa fa-odnoklassniki-square"></i>Class Room <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="@Url.Action("Index","ManageClassRoom")">Allocate Classrooms</a></li>
+                                        <li><a href="@Url.Action("ViewClassSchedule","ManageClassRoom")">View Class Schedule</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="@Url.Action("UnassignAllCourses","Course")"><i class="fa fa-exclamation-triangle"></i>Unasign All Course</a> </li>
+                                <li><a href="@Url.Action("UnallocateAllClassRoom","ManageClassRoom")"><i class="fa fa-exclamation-circle"></i>Unalocate All Classrooms</a> </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <!-- /sidebar menu -->
+                    <!-- /menu footer buttons -->
+                    <div class="sidebar-footer hidden-small">
+                        <a data-toggle="tooltip" data-placement="top" title="Settings">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Lock">
+                            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="#">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    <!-- /menu footer buttons -->
+                </div>
+            </div>
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        </div>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    @*<img src="" alt="">*@Tofael
+                                    <span class=" fa fa-angle-down"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li><a href="#"> Profile</a></li>
+                                    <li><a href="#"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="right_col" role="main" style="min-height: 1381px;">
+                @RenderBody()
+
+            </div>
+            <div class="footer_fixed">
+                <footer>
+                    <div class="pull-right">
+                        &copy; @DateTime.Now.Year - Fighter Team
+                    </div>
+                    <div class="clearfix"></div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/bootstrap-progressbar.min.js"></script>
+    <script src="~/Scripts/custom.min.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

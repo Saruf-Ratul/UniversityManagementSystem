@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "UnassignAllCourses";
+}
+
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h3>Unassign All Courses</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br>
+                    <div class="form-group">
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-md-offset-5">
+                            <a href="#" class="btn btn-danger" onclick="UnassignAllCourse()">Unassign Courses</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var UnassignAllCourse = function () {
+            swal({
+                title: 'Are you sure?',
+                text: "Do You Want,Unassign All Courses ? ",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                cancelButtonText: "No"
+            }).then(function (isConfirm) {
+                if (isConfirm.value) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Course/ComfirmUnassignAllCourse",
+                        success: function (result) {
+                            if (result) {
+                                swal(
+                                    'Good job!',
+                                    'Successfully Unassign All Courses',
+                                    'success'
+                                );
+                            }
+                        }
+                    });
+                }
+            });
+
+        }
+    </script>
+}

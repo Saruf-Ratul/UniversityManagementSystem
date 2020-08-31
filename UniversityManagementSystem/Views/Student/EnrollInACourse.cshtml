@@ -1,0 +1,180 @@
+﻿@model UniversityManagementSystem.Models.CourseEnroll
+@{
+    ViewBag.Title = "Course Enroll";
+}
+
+<style>
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .btn {
+        margin-top: 0px;
+    }
+</style>
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h3>Enroll In A Course</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br>
+                    <form id="FormData" class="form">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.StudentId, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.DropDownListFor(model => model.StudentId, new SelectList(ViewBag.getAllStudents, "Id", "RegNo"), "--Select Student Reg. No.--", new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.StudentId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Name)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Email)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Department, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Department, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Department)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CourseId, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12 remoteValidation">
+                                @Html.DropDownListFor(model => model.CourseId, new SelectList(" "), "--Select Course--", new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.CourseId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Date, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                @Html.TextBoxFor(model => model.Date, new { @class = "form-control col-md-7 col-xs-12" })
+                                @Html.ValidationMessageFor(model => model.Date)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-4 col-sm-4 col-xs-12 col-md-offset-8">
+                                <a href="#" class="btn btn-success" onclick="SaveForm()">Enroll</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+
+            $("#Date").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'yy-mm-dd'
+            });
+            $('#Date').datepicker('setDate', 'today');
+        });
+        $(document).ready(function () {
+            $("#Name").attr("readonly", "readonly");
+            $("#Email").attr("readonly", "readonly");
+            $("#Department").attr("readonly", "readonly");
+
+            $("#StudentId").change(function () {
+                var studentId = $("#StudentId").val();
+                $("#Name").val("");
+                $("#Email").val("");
+                $("#Department").val("");
+                var json = { Id: studentId };
+                $.ajax({
+                    type: "POST",
+                    url: '/Student/GetStudentInfoByStudentId',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (student) {
+                        //var obj = JSON.parse(student);
+                        $("#Name").val(student.Name);
+                        $("#Email").val(student.Email);
+                        $("#Department").val(student.Department);
+                        $("input").addClass("valid");
+                    }
+                });
+                //Load Course
+                $.ajax({
+                    type: "POST",
+                    url: '/Student/GetCourseByStudentDepartment',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (course) {
+                        $("#CourseId").empty();
+                        $("#CourseId").append('<option value=' + " " + '>' + "--Select Course --" + '</option>');
+                        $.each(course, function (key, value) {
+                            $("#CourseId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+                        });
+                    }
+                });
+            });
+            $("#CourseId").change(function () {
+                var studentId = $("#StudentId").val();
+                var courseId = $("#CourseId").val();
+                var json = { StudentId: studentId, CourseId: courseId };
+                $.ajax({
+                    type: "POST",
+                    url: '/Student/IsEnrolledCourse',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (result) {
+                        $(".remoteValidation span").remove();
+                        if (!result) {
+                            var invalid= '<span class="field-validation-error" data-valmsg-for="CourseId" data-valmsg-replace="true"><span for="CourseId" class="">You Already Enroll This Course! Try Another.</span></span>';
+                            $(".remoteValidation").append(invalid);
+                        } else {
+                            var valid = '<span class="field-validation-valid" data-valmsg-for="CourseId" data-valmsg-replace="true"></span>';
+                            $(".remoteValidation").append(valid);
+                        }
+                    }
+                });
+            });
+        });
+        var SaveForm = function () {
+            var data = $("#FormData").serialize();
+            if (!$("#FormData").valid()) {
+                return false;
+            }
+            $.ajax({
+                type: "Post",
+                url: "/Student/SaveCourseEnrollInfo",
+                data: data,
+                success: function (result) {
+                    if (result) {
+                        swal(
+                            'Good job!',
+                            'Successfully Enrolled Course',
+                            'success'
+                        );
+                        $("input").removeClass("valid");
+                        $("select").removeClass("valid");
+                        $("textarea").removeClass("valid");
+                        $(".form")[0].reset();
+                    }
+                    $('#Date').datepicker('setDate', 'today');
+                }
+            });
+            return true;
+        }
+    </script>
+}
+

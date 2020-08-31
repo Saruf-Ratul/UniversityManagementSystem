@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "UnallocateAllClassRoom";
+}
+
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h3>Unallocate All Classrooms</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <br>
+                    <div class="form-group">
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-md-offset-5">
+                            <a href="#" class="btn btn-danger" onclick="UnallocateAllClass()">Unallocate Rooms</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var UnallocateAllClass = function () {
+            swal({
+                title: 'Are you sure?',
+                text: "Do You Want,Unallocate All Classrooms ? ",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                cancelButtonText: "No"
+            }).then(function (isConfirm) {
+                if (isConfirm.value) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/ManageClassRoom/ComfirmUnallocateAllClassRoom",
+                        success: function (result) {
+                            if (result) {
+                                swal(
+                                    'Good job!',
+                                    'Successfully Unallocate All Rooms',
+                                    'success'
+                                );
+                            }
+                        }
+                    });
+                }
+            });
+
+        }
+    </script>
+}
